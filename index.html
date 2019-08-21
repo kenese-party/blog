@@ -29,7 +29,7 @@
         </script>
     </head>
     <body>
-        <ul id="example-1">
+        <ul id="page">
             <p v-for="item in items">
                 {{item.name}}
                 创建于{{item.created_date}}
@@ -37,7 +37,7 @@
         </ul>
         <script>
         var app = new Vue({
-        el: '#example-1',
+        el: '#page',
         data: {
             items: new Array(),
             created_dates: new Array(),
