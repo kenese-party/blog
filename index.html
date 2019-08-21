@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <script src="./vue.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+        <script src="https://trello.com/1/client.js?key=ce77e6af1371cfb41f4a8e8840d76f4c"></script>
+        <script>
+            Date.prototype.format = function(fmt) { 
+            var o = { 
+                "M+" : this.getMonth()+1,                 //月份 
+                "d+" : this.getDate(),                    //日 
+                "h+" : this.getHours(),                   //小时 
+                "m+" : this.getMinutes(),                 //分 
+                "s+" : this.getSeconds(),                 //秒 
+                "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+                "S"  : this.getMilliseconds()             //毫秒 
+            }; 
+            if(/(y+)/.test(fmt)) {
+                    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+            }
+            for(var k in o) {
+                if(new RegExp("("+ k +")").test(fmt)){
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+                }
+            }
+            return fmt; 
+            }       
+        </script>
+    </head>
+    <body>
+        <ul id="example-1">
+            <p v-for="item in items">
+                {{item.name}}
+                创建于{{item.created_date}}
+            </p>
+        </ul>
+        <script>
+        var app = new Vue({
+        el: '#example-1',
+        data: {
+            items: new Array(),
+            created_dates: new Array(),
+        },
+        created: function(){
+            var that=this;
+            window.Trello.get("boards/zqJHbNrr/cards").done(
+                function(data){
+                    console.log(data);
+                    data = data.sort(function(a,b){
+                        return parseInt(b.id.substring(0,8))-parseInt(a.id.substring(0,8),16);
+                    })
+                    for(var i=0;i<data.length;++i)
+                    {
+                        data[i].created_date = new Date(1000*parseInt(data[i].id.substring(0,8),16)).format("yyyy/MM/dd hh:mm");
+                    }
+                    that.items=data;
+                    }
+            )
+        }
+        })
+        </script>
+    </body>
+</html>
