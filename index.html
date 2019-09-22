@@ -2,89 +2,20 @@
 <html>
     <head>
         <meta charset="utf8">
-        <script src="./vue.js"></script>
+        <script src="vue.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
         <script src="https://trello.com/1/client.js?key=ce77e6af1371cfb41f4a8e8840d76f4c"></script>
-        <script>
-            Date.prototype.format = function(fmt) { 
-            var o = { 
-                "M+" : this.getMonth()+1,                 //月份 
-                "d+" : this.getDate(),                    //日 
-                "h+" : this.getHours(),                   //小时 
-                "m+" : this.getMinutes(),                 //分 
-                "s+" : this.getSeconds(),                 //秒 
-                "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-                "S"  : this.getMilliseconds()             //毫秒 
-            }; 
-            if(/(y+)/.test(fmt)) {
-                    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
-            }
-            for(var k in o) {
-                if(new RegExp("("+ k +")").test(fmt)){
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-                }
-            }
-            return fmt; 
-            }       
-        </script>
-        <style type="text/css">
-        body{
-            background: #ebecf0;
-        }
-        .page{
-            background-color: #ebecf0;
-            font-family:arial,verdana,sans-serif, '微软雅黑';
-        }
-        .main{
-            box-sizing: border-box;
-            padding: 10px;
-        }
-        .item{
-            background-color: #9CD1F5;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            box-sizing: border-box;
-            align-items: flex-start;
-            cursor: pointer;
-            margin: 10px;
-            padding: 10px;
-            border: 5px solid #9cd1f5;
-            border-radius: 10px;
-
-            -webkit-transition-duration: 0.2s; /* Safari */
-            transition-duration: 0.2s;
-            -webkit-user-select:none;
-            -moz-user-select:none;
-            -ms-user-select:none;
-            user-select:none;
-        }
-
-        .item:hover{
-            background-color: #1F99EB;
-            color: #ffffff;
-            border: 5px solid #1F99EB;
-            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-        }
-
-        .item:active{
-            background-color: #127EC7;
-            color: #ffffff;
-            border: 5px solid #127EC7;
-            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-        }
-        .title{
-            font-size: 22px;
-        }
-        </style>
+        <script src="date.format.js"></script>
+        <!--引入外部通用样式表-->
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
         <div id="page" class="page">
             <div class="main">
-                <h1>所有卡片</h1>
+                <p class="page-title">所有卡片</p>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.open(item.url)">
-                    <p class="title">{{item.name}}</p>
-                    <p class="created-date">创建于{{item.created_date}}</p>
+                    <p class="item-title">{{item.name}}</p>
+                    <p>创建于{{item.created_date}}</p>
                 </div>
             </div>
         </div>
@@ -106,18 +37,18 @@
                     })
                     for(var i=0;i<data.length;++i)
                     {
-                        data[i].created_date = new Date(1000*parseInt(data[i].id.substring(0,8),16)).format("yyyy/MM/dd hh:mm");
+                        data[i].created_date = new Date(1000*parseInt(data[i].id.substring(0,8),16)).format("Y/m/d H:i"); // 注意：使用date.format.js库
                     }
                     that.items=data;
                     }
             );
-            window.Trello.get(
+           /* window.Trello.get(
                 "boards/zqJHbNrr/actions?filter=createCard:idCard&actions_limit=1000&action_memberCreator_fields=fullName"
             ).done(
                 function(data){
                     console.log("actions filtered:",data);
                 }    
-            )
+            )*/
         },
         methods: {
         }
