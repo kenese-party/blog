@@ -28,8 +28,11 @@
             }       
         </script>
         <style type="text/css">
+        body{
+            background: #ebecf0;
+        }
         .page{
-            background-color: #ffffff;
+            background-color: #ebecf0;
             font-family:arial,verdana,sans-serif, '微软雅黑';
         }
         .main{
@@ -37,28 +40,29 @@
             padding: 10px;
         }
         .item{
-            background-color: #00cccc;
+            background-color: #9CD1F5;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             box-sizing: border-box;
             align-items: flex-start;
+            cursor: pointer;
             margin: 10px;
             padding: 10px;
+            border: 5px solid #9cd1f5;
+            border-radius: 10px;
+            -webkit-transition-duration: 0.2s; /* Safari */
+            transition-duration: 0.2s;
         }
 
+        .item:hover{
+            background-color: #1F99EB;
+            color: #ffffff;
+            border: 5px solid #1F99EB;
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        }
         .title{
             font-size: 22px;
-            background: #00bbbb;
-            border: 1px solid #00bbbb;
-        }
-        .title:hover{
-            background: #00eeee;
-            border: 1px solid #00eeee;
-        }
-        .title:active{
-            background: #00ffff;
-            border: 1px solid #00ffff;
         }
         </style>
     </head>
@@ -66,8 +70,8 @@
         <div id="page" class="page">
             <div class="main">
                 <h1>所有卡片</h1>
-                <div class="item" v-for="item in items" :key="item.id">
-                    <button class="title" v-on:click="window.open(item.url)">{{item.name}}</button>
+                <div class="item" v-for="item in items" :key="item.id" v-on:click="window.open(item.url)">
+                    <p class="title">{{item.name}}</p>
                     <p class="created-date">创建于{{item.created_date}}</p>
                 </div>
             </div>
@@ -94,6 +98,13 @@
                     }
                     that.items=data;
                     }
+            );
+            window.Trello.get(
+                "boards/zqJHbNrr/actions?filter=createCard:idCard&actions_limit=1000&action_memberCreator_fields=fullName"
+            ).done(
+                function(data){
+                    console.log("actions filtered:",data);
+                }    
             )
         },
         methods: {
