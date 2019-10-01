@@ -15,7 +15,7 @@
                 <p class="page-title">所有卡片</p>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.open(item.url)">
                     <p class="item-title">{{item.name}}</p>
-                    <p>创建于{{item.created_date}}</p>
+                    <p>{{item.memberCreatorFullName}} 创建于 {{item.created_date}}</p>
                 </div>
             </div>
         </div>
@@ -29,19 +29,38 @@
         },
         created: function(){
             var that=this;
-            window.Trello.get("boards/zqJHbNrr/cards").done(
-                function(data){
+            window.Trello.get("boards/zqJHbNrr?cards=open&actions=createCard").done(
+                function(dat){
+                    var data = dat.cards;
+                    console.log(dat);
                     console.log(data);
                     data = data.sort(function(a,b){
                         return parseInt(b.id.substring(0,8),16)-parseInt(a.id.substring(0,8),16);
                     })
                     for(var i=0;i<data.length;++i)
                     {
-                        data[i].created_date = new Date(1000*parseInt(data[i].id.substring(0,8),16)).format("Y/m/d H:i"); // 注意：使用date.format.js库
+                        data[i].created_date = new Date(1000*parseInt(data[i].id.substring(0,8),16)).format("Y年m月d日 H:i"); // 注意：使用date.format.js库
                     }
+
+                    // 获取创建者数据
+                    var actions = dat.actions;
+                    var creators = new Object();
+                    for(var i in actions) creators[actions[i].data.card.id] = actions[i].memberCreator.fullName;
+                    for(var i in data) data[i].memberCreatorFullName = creators[data[i].id];
                     that.items=data;
+                    console.log(that.items);
                     }
             );
+            /*window.Trello.get("boards/zqJHbNrr?actions=createCard").done(
+                function(data){
+                    console.log("createCard",data);
+                    var dat = new Object();
+                    for(var i in data.actions) dat[data.actions[i].data.card.id] = data.actions[i].memberCreator.fullName;
+                    var New = that.items;
+                    for(var i in New) New[i].memberCreatorFullName = dat[New[i].id];
+                    that.items = New;
+                }
+            )*/
            /* window.Trello.get(
                 "boards/zqJHbNrr/actions?filter=createCard:idCard&actions_limit=1000&action_memberCreator_fields=fullName"
             ).done(
