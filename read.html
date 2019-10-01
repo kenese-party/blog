@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <script src="vue.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+        <script src="https://trello.com/1/client.js?key=ce77e6af1371cfb41f4a8e8840d76f4c"></script>
+        <script src="date.format.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script><!--引入MarkDown渲染引擎-->
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div id="page" class="page">
+            <div class="article" v-if="memberCreatorFullName">
+                <p class="page-title">{{name}}</p>
+                <p id="title">由 {{memberCreatorFullName}} 创建于 {{created_date}}</p>
+                <div v-html="compiledMarkdown"></div>
+            </div>
+        </div>
+        <script>
+            var app = new Vue({
+                el: "#page",
+                data: {
+                    card_id: "",
+                    memberCreatorFullName: "",
+                    created_date: "",
+                    name: "",
+                    desc: "",
+                },
+                computed: {
+                    compiledMarkdown: function(){
+                        return marked(this.desc, {sanitize: true});
+                    },
+                },
+                created: function(){
+                    var that = this;
+                    var id = window.location.href.split("?card_id=")[1];
+                    if(id == undefined) window.location = "index.html";
+                    console.log(id);
+                    this.card_id = id;
+                    window.Trello.get("boards/zqJHbNrr/cards/"+id+"?actions=createCard").done(
+                        function(data){
+                            console.log(data);
+                            that.desc = data.desc;
+                            that.name = data.name;
+                            that.memberCreatorFullName = data.actions[0].memberCreator.fullName;
+                            that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
+                        }
+                    )
+                }
+            })
+        </script>
+    </body>
+</html>

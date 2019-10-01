@@ -13,7 +13,7 @@
         <div id="page" class="page">
             <div class="main">
                 <p class="page-title">所有卡片</p>
-                <div class="item" v-for="item in items" :key="item.id" v-on:click="window.open(item.url)">
+                <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
                     <p class="item-title">{{item.name}}</p>
                     <p>{{item.memberCreatorFullName}} 创建于 {{item.created_date}}</p>
                 </div>
