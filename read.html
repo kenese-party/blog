@@ -26,6 +26,7 @@
                     created_date: "",
                     name: "",
                     desc: "",
+                    link: "",
                 },
                 computed: {
                     compiledMarkdown: function(){
@@ -41,7 +42,8 @@
                     window.Trello.get("boards/zqJHbNrr/cards/"+id+"?actions=createCard").done(
                         function(data){
                             console.log(data);
-                            that.desc = data.desc;
+                            var ex = "[在Trello上阅读此文章]("+data.url+")\n\n";
+                            that.desc = ex+data.desc;
                             that.name = data.name;
                             that.memberCreatorFullName = data.actions[0].memberCreator.fullName;
                             that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
