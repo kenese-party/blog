@@ -15,7 +15,10 @@
                 <p class="page-title">所有卡片</p>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
                     <p class="item-title">{{item.name}}</p>
-                    <p>{{item.memberCreatorFullName}} 创建于 {{item.created_date}}</p>
+                    <p class="article-info">
+                        <img v-bind:src="item.memberCreatorAvatar" style="margin-right:10px"/>
+                        <a>{{item.memberCreatorFullName}}  {{item.created_date}}</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -45,8 +48,11 @@
                     // 获取创建者数据
                     var actions = dat.actions;
                     var creators = new Object();
-                    for(var i in actions) creators[actions[i].data.card.id] = actions[i].memberCreator.fullName;
-                    for(var i in data) data[i].memberCreatorFullName = creators[data[i].id];
+                    for(var i in actions) creators[actions[i].data.card.id] = actions[i].memberCreator;
+                    for(var i in data) {
+                        data[i].memberCreatorFullName = creators[data[i].id].fullName;
+                        data[i].memberCreatorAvatar = creators[data[i].id].avatarUrl+"/30.png";
+                    }
                     that.items=data;
                     console.log(that.items);
                     }

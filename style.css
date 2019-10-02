@@ -57,3 +57,9 @@ body{
     border-radius: 5px;
 }
 
+.article-info{
+    /*文章作者、日期信息*/
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+}

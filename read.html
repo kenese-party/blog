@@ -13,7 +13,10 @@
         <div id="page" class="page">
             <div class="article" v-if="memberCreatorFullName">
                 <p class="page-title">{{name}}</p>
-                <p id="title">由 {{memberCreatorFullName}} 创建于 {{created_date}}</p>
+                <div class="article-info">
+                    <img v-bind:src="memberCreatorAvatar" style="margin-right:10px"/>
+                    <a>{{memberCreatorFullName}}  {{created_date}}</a>
+                </div>
                 <div v-html="compiledMarkdown"></div>
             </div>
         </div>
@@ -23,6 +26,7 @@
                 data: {
                     card_id: "",
                     memberCreatorFullName: "",
+                    memberCreatorAvatar: "",
                     created_date: "",
                     name: "",
                     desc: "",
@@ -46,6 +50,7 @@
                             that.desc = ex+data.desc;
                             that.name = data.name;
                             that.memberCreatorFullName = data.actions[0].memberCreator.fullName;
+                            that.memberCreatorAvatar = data.actions[0].memberCreator.avatarUrl+"/30.png";
                             that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
                         }
                     )
