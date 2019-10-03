@@ -15,9 +15,9 @@
                 <p class="page-title">所有卡片</p>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
                     <p class="item-title">{{item.name}}</p>
-                    <p class="article-info">
-                        <img v-bind:src="item.memberCreatorAvatar" style="margin-right:10px"/>
-                        <a>{{item.memberCreatorFullName}}  {{item.created_date}}</a>
+                    <div class="article-info">
+                        <img v-bind:src="item.memberCreatorAvatar"/><a style="margin:10px">{{item.memberCreatorFullName}}</a>
+                        <a class="created_date">{{item.created_date}}</a>
                     </p>
                 </div>
             </div>

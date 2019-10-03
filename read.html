@@ -14,8 +14,9 @@
             <div class="article" v-if="memberCreatorFullName">
                 <p class="page-title">{{name}}</p>
                 <div class="article-info">
-                    <img v-bind:src="memberCreatorAvatar" style="margin-right:10px"/>
-                    <a>{{memberCreatorFullName}}  {{created_date}}</a>
+                    <img v-bind:src="memberCreatorAvatar"/>
+                    <a style="margin:10px">{{memberCreatorFullName}}</a>
+                    <a class="created_date">{{created_date}}</a>
                 </div>
                 <div v-html="compiledMarkdown"></div>
             </div>
