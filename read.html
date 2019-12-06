@@ -11,10 +11,10 @@
     </head>
     <body>
         <div id="page" class="page">
-            <div class="article" v-if="memberCreatorFullName">
+            <div class="article"  v-if="memberCreatorFullName">
                 <p class="page-title">{{name}}</p>
-                <div class="article-info">
-                    <img v-bind:src="memberCreatorAvatar"/>
+                <div class="article-info" :style="isMobile ? 'font-size: 40px' : ''">
+                    <img v-bind:src="memberCreatorAvatar" :style="isMobile ? 'width:40px;height:40px;':''"/>
                     <a style="margin:10px">{{memberCreatorFullName}}</a>
                     <a class="created_date">{{created_date}}</a>
                 </div>
@@ -32,6 +32,7 @@
                     name: "",
                     desc: "",
                     link: "",
+                    isMobile: false,
                 },
                 computed: {
                     compiledMarkdown: function(){
@@ -41,6 +42,7 @@
                 created: function(){
                     var that = this;
                     var id = window.location.href.split("?card_id=")[1];
+                    if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
                     if(id == undefined) window.location = "index.html";
                     console.log(id);
                     this.card_id = id;
