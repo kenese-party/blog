@@ -6,18 +6,25 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
         <script src="https://trello.com/1/client.js?key=ce77e6af1371cfb41f4a8e8840d76f4c"></script>
         <script src="date.format.js"></script>
+        <script src="common.js"></script>
         <!--引入外部通用样式表-->
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
         <div id="page" class="page">
             <div class="main">
-                <p class="page-title" v-bind:style="isMobile ? 'font-size:50px': ''">所有卡片</p>
+                <p class="page-title">所有卡片</p>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
-                    <p class="item-title" v-bind:style="isMobile ? 'font-size:45px': ''">{{item.name}}</p>
-                    <div class="article-info" v-bind:style="isMobile ? 'font-size:35px': ''">
+                    <p class="item-title">{{item.name}}</p>
+                    <div class="article-info">
                         <img v-bind:src="item.memberCreatorAvatar"/><a style="margin:10px">{{item.memberCreatorFullName}}</a>
-                        <a class="created_date">{{item.created_date}}</a>
+                        <a class="shallow_text">{{item.created_date}}</a>
+                    </div>
+                    <div class="article-info">
+                        <a class="shallow_text">{{categories[item.idList].name}}</a>
+                    </div>
+                    <div class="article-info" style="display:flex;flex-wrap: wrap;">
+                        <a class="label" v-for="l in item.idLabels" :style="'background: '+label_colors[labels[l].color]+';border-color:'+label_colors[labels[l].color]">{{labels[l].name!=''?labels[l].name:'\t\t'}}</a>
                     </div>
                     </p>
                 </div>
@@ -30,15 +37,20 @@
         el: '#page',
         data: {
             items: new Array(),
+            categories: {}, // 卡片列表（分类）
+            labels: {}, // 卡片标签
+            label_colors: LABEL_COLORS,
             created_dates: new Array(),
             window: window,
             isMobile: false,
         },
         created: function(){
             var that=this;
-            window.Trello.get("boards/zqJHbNrr?cards=open&actions=createCard").done(
+            window.Trello.get("boards/zqJHbNrr?cards=open&actions=createCard&lists=open&labels=all").done(
                 function(dat){
-                    var data = dat.cards;
+                    var data = dat.cards; // 卡片列表
+                    var lists = dat.lists; // 卡片列表列表
+                    var labels = dat.labels; // 标签列表
                     console.log(dat);
                     console.log(data);
                     data = data.sort(function(a,b){
@@ -59,6 +71,12 @@
                     }
                     that.items=data;
                     console.log(that.items);
+
+                    // 处理分类
+                    for(var i in lists) that.categories[lists[i].id] = lists[i]; 
+                    // 处理标签
+                    for(var i in labels) that.labels[labels[i].id] = labels[i];
+                    console.log(that.categories);
                     }
             );
 

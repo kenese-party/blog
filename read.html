@@ -13,10 +13,10 @@
         <div id="page" class="page">
             <div class="article"  v-if="memberCreatorFullName">
                 <p class="page-title">{{name}}</p>
-                <div class="article-info" :style="isMobile ? 'font-size: 40px' : ''">
-                    <img v-bind:src="memberCreatorAvatar" :style="isMobile ? 'width:40px;height:40px;':''"/>
+                <div class="article-info">
+                    <img class="avatar" v-bind:src="memberCreatorAvatar"/>
                     <a style="margin:10px">{{memberCreatorFullName}}</a>
-                    <a class="created_date">{{created_date}}</a>
+                    <a class="shallow_text">{{created_date}}</a>
                 </div>
                 <div v-html="compiledMarkdown"></div>
             </div>
