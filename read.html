@@ -36,7 +36,7 @@
                 },
                 computed: {
                     compiledMarkdown: function(){
-                        return marked(this.desc, {sanitize: true});
+                        return marked(this.desc, {});
                     },
                 },
                 created: function(){
