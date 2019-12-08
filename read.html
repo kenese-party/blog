@@ -19,6 +19,18 @@
                     <a class="shallow_text">{{created_date}}</a>
                 </div>
                 <div v-html="compiledMarkdown"></div>
+                <div class="comments">
+                    <p class="comments-title">评论 共{{comments.length}}条</p>
+                    <a :href="link" style="display: block;margin-bottom: 10px">在Trello上发表评论</a>
+                    <div class="comment" v-for="c in comments">
+                        <div class="article-info">
+                            <img class="avatar" v-bind:src="c.memberCreator.avatarUrl+'/30.png'"/>
+                            <a style="margin:10px">{{c.memberCreator.fullName}}</a>
+                            <a class="shallow_text">{{new Date(c.date).format("Y年m月d日 H:i")}}</a>
+                        </div>
+                        <div v-html="c.compiledMarkdown"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <script>
@@ -29,9 +41,10 @@
                     memberCreatorFullName: "",
                     memberCreatorAvatar: "",
                     created_date: "",
+                    comments: new Array(), // 评论
                     name: "",
                     desc: "",
-                    link: "",
+                    link: "", // 对应卡片的link
                     isMobile: false,
                 },
                 computed: {
@@ -46,15 +59,22 @@
                     if(id == undefined) window.location = "index.html";
                     console.log(id);
                     this.card_id = id;
-                    window.Trello.get("boards/zqJHbNrr/cards/"+id+"?actions=createCard").done(
+                    original = window.Trello.get("boards/zqJHbNrr/cards/"+id+"?actions=createCard,commentCard");
+                    original.fail(function(data){window.location = "index.html"}); // 失败的处理机制
+                    original.done(
                         function(data){
                             console.log(data);
-                            var ex = "[在Trello上阅读此文章]("+data.url+")\n\n";
+                            that.link = data.url;
+                            var ex = "[在Trello上阅读此文章]("+that.link+")\n\n";
                             that.desc = ex+data.desc;
                             that.name = data.name;
-                            that.memberCreatorFullName = data.actions[0].memberCreator.fullName;
-                            that.memberCreatorAvatar = data.actions[0].memberCreator.avatarUrl+"/30.png";
+                            that.memberCreatorFullName = data.actions[data.actions.length-1].memberCreator.fullName;
+                            that.memberCreatorAvatar = data.actions[data.actions.length-1].memberCreator.avatarUrl+"/30.png";
                             that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
+                            for(var i=0;i<=data.actions.length-2;++i) { // 从最晚到最早的评论排序
+                                data.actions[i].compiledMarkdown = marked(data.actions[i].data.text);
+                                that.comments.push(data.actions[i]); // 其他actions都是comments
+                            }
                         }
                     )
                 }
