@@ -13,7 +13,11 @@
     <body>
         <div id="page" class="page">
             <div class="main">
-                <p class="page-title">所有卡片</p>
+                <div>
+                    <p class="page-title">所有卡片</p>
+                    <div v-if="window.Trello.authorized()">已登录</div>
+                    <div v-else v-on:click="authorize()">未登录</div>
+                </div>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
                     <p class="item-title">{{item.name}}</p>
                     <div class="article-info">
@@ -33,6 +37,7 @@
 
 
         <script>
+        
         var app = new Vue({
         el: '#page',
         data: {
@@ -46,7 +51,12 @@
         },
         created: function(){
             var that=this;
-            window.Trello.get("boards/zqJHbNrr?cards=open&actions=createCard&lists=open&labels=all").done(
+            // 登录设置
+            if(localStorage["trello_token"]!=undefined) // 曾经主动登录过，尝试自动登录
+            {
+                this.authorize();
+            }
+            Trello.get("boards/zqJHbNrr?cards=open&actions=createCard&lists=open&labels=all").done(
                 function(dat){
                     var data = dat.cards; // 卡片列表
                     var lists = dat.lists; // 卡片列表列表
@@ -80,7 +90,7 @@
                     }
             );
 
-            if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
+            //if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
             /*window.Trello.get("boards/zqJHbNrr?actions=createCard").done(
                 function(data){
                     console.log("createCard",data);
@@ -100,6 +110,21 @@
             )*/
         },
         methods: {
+            authorize() {
+                Trello.authorize({
+                    expiration: "never",
+                    type: "redirect",
+                    name: "tester",
+                    scope: { read: true, write: true},
+                    success() {
+                        console.log(Trello.token(),Trello.authorized())
+                        console.log(localStorage);
+                        Trello.get("tokens/"+Trello.token()+"/member", function(dat){
+                            console.log("info of token:",dat)
+                        })
+                    }
+                })
+            }
         }
         })
         </script>

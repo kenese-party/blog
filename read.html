@@ -54,8 +54,9 @@
                 },
                 created: function(){
                     var that = this;
-                    var id = window.location.href.split("?card_id=")[1];
-                    if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
+                    var addr = new URL(window.location.href);
+                    var id = addr.searchParams.get("card_id");
+                    //if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
                     if(id == undefined) window.location = "index.html";
                     console.log(id);
                     this.card_id = id;
