@@ -106,6 +106,7 @@
                         that.authorized = true;
                         Trello.get("tokens/"+Trello.token()+"/member", function(dat){
                             console.log("info of token:",dat)
+                            that.user_info = dat;
                         })
                     }
                 })
