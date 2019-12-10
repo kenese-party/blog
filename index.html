@@ -15,7 +15,7 @@
             <div class="main">
                 <div>
                     <p class="page-title">所有卡片</p>
-                    <div v-if="window.Trello.authorized()">已登录</div>
+                    <div v-if="authorized">已登录</div>
                     <div v-else v-on:click="authorize()">未登录</div>
                 </div>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
@@ -48,6 +48,9 @@
             created_dates: new Array(),
             window: window,
             isMobile: false,
+        },
+        computed: {
+            authorized: Trello.authorized
         },
         created: function(){
             var that=this;
