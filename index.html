@@ -48,9 +48,7 @@
             created_dates: new Array(),
             window: window,
             isMobile: false,
-        },
-        computed: {
-            authorized: Trello.authorized
+            authorized: false
         },
         created: function(){
             var that=this;
@@ -92,28 +90,10 @@
                     console.log(that.categories);
                     }
             );
-
-            //if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
-            /*window.Trello.get("boards/zqJHbNrr?actions=createCard").done(
-                function(data){
-                    console.log("createCard",data);
-                    var dat = new Object();
-                    for(var i in data.actions) dat[data.actions[i].data.card.id] = data.actions[i].memberCreator.fullName;
-                    var New = that.items;
-                    for(var i in New) New[i].memberCreatorFullName = dat[New[i].id];
-                    that.items = New;
-                }
-            )*/
-           /* window.Trello.get(
-                "boards/zqJHbNrr/actions?filter=createCard:idCard&actions_limit=1000&action_memberCreator_fields=fullName"
-            ).done(
-                function(data){
-                    console.log("actions filtered:",data);
-                }    
-            )*/
         },
         methods: {
             authorize() {
+                var that = this;
                 Trello.authorize({
                     expiration: "never",
                     type: "redirect",
@@ -122,6 +102,7 @@
                     success() {
                         console.log(Trello.token(),Trello.authorized())
                         console.log(localStorage);
+                        that.authorized = true;
                         Trello.get("tokens/"+Trello.token()+"/member", function(dat){
                             console.log("info of token:",dat)
                         })
