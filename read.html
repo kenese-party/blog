@@ -12,7 +12,12 @@
     <body>
         <div id="page" class="page">
             <div class="article"  v-if="memberCreatorFullName">
-                <p class="page-title">{{name}}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                    <p class="page-title">{{name}}</p>
+                    <!--登录信息-->
+                    <div class="user-info" v-if="authorized"><img :src="user_info.avatarUrl+'/50.png'"/><a class="article-info" style="padding-left:10px">{{user_info.fullName}}</a></div>
+                    <button v-else class="authorize-button" v-on:click="authorize()">用Trello账户登录</button>
+                </div>
                 <div class="article-info">
                     <img class="avatar" v-bind:src="memberCreatorAvatar"/>
                     <a style="margin:10px">{{memberCreatorFullName}}</a>
@@ -46,6 +51,8 @@
                     desc: "",
                     link: "", // 对应卡片的link
                     isMobile: false,
+                    authorized: false,
+                    user_info: {}
                 },
                 computed: {
                     compiledMarkdown: function(){
@@ -54,6 +61,10 @@
                 },
                 created: function(){
                     var that = this;
+                    if(localStorage["trello_token"]!=undefined) // 曾经主动登录过，尝试自动登录
+                    {
+                        this.authorize();
+                    }
                     var addr = new URL(window.location.href);
                     var id = addr.searchParams.get("card_id");
                     //if(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i)) this.isMobile = true;
@@ -78,6 +89,27 @@
                             }
                         }
                     )
+                },
+
+                methods: {
+                    authorize() {
+                        var that = this;
+                        Trello.authorize({
+                            expiration: "never",
+                            type: "popup",
+                            name: "KenCloud",
+                            scope: { read: true, write: true},
+                            success() {
+                                console.log(Trello.token(),Trello.authorized())
+                                console.log(localStorage);
+                                that.authorized = true;
+                                Trello.get("tokens/"+Trello.token()+"/member", function(dat){
+                                    console.log("info of token:",dat)
+                                    that.user_info = dat;
+                                })
+                            }
+                        })
+                    }
                 }
             })
         </script>
