@@ -130,6 +130,8 @@
                         console.log(t);
                     },
                     onPostComment() {
+                        var e = document.getElementById("comment-textarea");
+                        console.log(e, e.value);
                         var that = this;
                         if(this.authorized) {
                             this.postComment(function(){console.log("comment successful")})
