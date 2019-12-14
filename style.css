@@ -53,7 +53,7 @@ body{
     flex-direction: row;
     justify-content: space-between;
 }
-.authorize-button{
+button{
     display: inline-block;
     background-color: #9CD1F5;
     border: 5px solid #9cd1f5;
@@ -66,18 +66,18 @@ body{
     user-select:none;
 }
 
-.authorize-button:hover{
+button:hover{
     background-color: #1F99EB;
     color: #ffffff;
     border: 5px solid #1F99EB;
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    /*box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);*/
 }
 
-.authorize-button:active{
+button:active{
     background-color: #127EC7;
     color: #ffffff;
     border: 5px solid #127EC7;
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    /*box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);*/
 }
 .article{
     background-color: #f2f2f3;
@@ -122,6 +122,18 @@ body{
     border-radius: 5px;
     margin-bottom: 10px;
 }
+
+#comment-textarea{
+    display:block;
+    overflow:auto;
+    padding-bottom: 10px;
+    width: 100%;
+    margin-bottom:10px;
+    border-radius: 2px;
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 @media screen and (max-device-width: 960px) {
     /*移动端*/
     .page-title{

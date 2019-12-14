@@ -16,7 +16,7 @@
                     <p class="page-title">{{name}}</p>
                     <!--登录信息-->
                     <div class="user-info" v-if="authorized"><img :src="user_info.avatarUrl+'/50.png'"/><a class="article-info" style="padding-left:10px">{{user_info.fullName}}</a></div>
-                    <button v-else class="authorize-button" v-on:click="authorize()">用Trello账户登录</button>
+                    <button v-else v-on:click="authorize()">用Trello账户登录</button>
                 </div>
                 <div class="article-info">
                     <img class="avatar" v-bind:src="memberCreatorAvatar"/>
@@ -26,7 +26,11 @@
                 <div v-html="compiledMarkdown"></div>
                 <div class="comments">
                     <p class="comments-title">评论 共{{comments.length}}条</p>
-                    <a :href="link" style="display: block;margin-bottom: 10px">在Trello上发表评论</a>
+                    <div class="comment">
+                        <textarea id="comment-textarea" placeholder="支持用markdown写评论"></textarea>
+                        <button v-on:click="onPostComment">{{authorized ? "发布评论" : "登录并发布评论"}}</button>
+                    </div>
+                    <!--a :href="link" style="display: block;margin-bottom: 10px">在Trello上发表评论</a-->
                     <div class="comment" v-for="c in comments">
                         <div class="article-info">
                             <img class="avatar" v-bind:src="c.memberCreator.avatarUrl+'/30.png'"/>
@@ -60,7 +64,6 @@
                     },
                 },
                 created: function(){
-                    var that = this;
                     if(localStorage["trello_token"]!=undefined) // 曾经主动登录过，尝试自动登录
                     {
                         this.authorize();
@@ -71,28 +74,32 @@
                     if(id == undefined) window.location = "index.html";
                     console.log(id);
                     this.card_id = id;
-                    original = window.Trello.get("boards/zqJHbNrr/cards/"+id+"?actions=createCard,commentCard");
-                    original.fail(function(data){window.location = "index.html"}); // 失败的处理机制
-                    original.done(
-                        function(data){
-                            console.log(data);
-                            that.link = data.url;
-                            var ex = "[在Trello上阅读此文章]("+that.link+")\n\n";
-                            that.desc = ex+data.desc;
-                            that.name = data.name;
-                            that.memberCreatorFullName = data.actions[data.actions.length-1].memberCreator.fullName;
-                            that.memberCreatorAvatar = data.actions[data.actions.length-1].memberCreator.avatarUrl+"/30.png";
-                            that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
-                            for(var i=0;i<=data.actions.length-2;++i) { // 从最晚到最早的评论排序
-                                data.actions[i].compiledMarkdown = marked(data.actions[i].data.text);
-                                that.comments.push(data.actions[i]); // 其他actions都是comments
-                            }
-                        }
-                    )
+                    this.refresh();
                 },
 
                 methods: {
-                    authorize() {
+                    refresh() { // 页面内全部刷新，但是不是浏览器意义上的刷新
+                        var that = this;
+                        original = window.Trello.get("boards/zqJHbNrr/cards/"+this.card_id+"?actions=createCard,commentCard");
+                        original.fail(function(data){window.location = "index.html"}); // 失败的处理机制
+                        original.done(
+                            function(data){
+                                console.log(data);
+                                that.link = data.url;
+                                var ex = "[在Trello上阅读此文章]("+that.link+")\n\n";
+                                that.desc = ex+data.desc;
+                                that.name = data.name;
+                                that.memberCreatorFullName = data.actions[data.actions.length-1].memberCreator.fullName;
+                                that.memberCreatorAvatar = data.actions[data.actions.length-1].memberCreator.avatarUrl+"/30.png";
+                                that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
+                                for(var i=0;i<=data.actions.length-2;++i) { // 从最晚到最早的评论排序
+                                    data.actions[i].compiledMarkdown = marked(data.actions[i].data.text);
+                                    that.comments.push(data.actions[i]); // 其他actions都是comments
+                                }
+                            }
+                        )
+                    },
+                    authorize(suc=null) {
                         var that = this;
                         Trello.authorize({
                             expiration: "never",
@@ -106,9 +113,31 @@
                                 Trello.get("tokens/"+Trello.token()+"/member", function(dat){
                                     console.log("info of token:",dat)
                                     that.user_info = dat;
+                                    if(suc!=null) suc(); // 回调成功函数
                                 })
                             }
                         })
+                    },
+
+                    postComment(suc=null) {
+                        var e = document.getElementById("comment-textarea");
+                        if(!e.value) return;
+                        var that = this;
+                        Trello.post("cards/"+this.card_id+"actions/comments?text="+e.value, function(){
+                            that.refresh();
+                            if(suc!=null) suc(); // 回调成功函数 
+                        })
+                    },
+                    onPostComment() {
+                        var that = this;
+                        if(this.authorized) {
+                            this.postComment(function(){console.log("comment successful")})
+                        }
+                        else {
+                            this.authorize(function(){
+                                that.postComment(function(){console.log("comment successful")})
+                            })
+                        }
                     }
                 }
             })

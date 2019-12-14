@@ -17,7 +17,7 @@
                     <p class="page-title">所有卡片</p>
                     <!--登录信息-->
                     <div class="user-info" v-if="authorized"><img :src="user_info.avatarUrl+'/50.png'"/><a class="article-info" style="padding-left:10px">{{user_info.fullName}}</a></div>
-                    <button v-else class="authorize-button" v-on:click="authorize()">用Trello账户登录</button>
+                    <button v-else v-on:click="authorize()">用Trello账户登录</button>
                 </div>
                 <div class="item" v-for="item in items" :key="item.id" v-on:click="window.location = 'read.html?card_id='+item.id">
                     <p class="item-title">{{item.name}}</p>
