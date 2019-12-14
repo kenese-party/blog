@@ -120,18 +120,17 @@
                     },
 
                     postComment(suc=null) {
-                        var e = document.getElementById("comment-textarea");
-                        if(!e.value) return;
+                        var value = document.getElementById("comment-textarea").value;
+                        console.log("valueis:",value);
+                        if(value) return;
                         var that = this;
-                        var t = Trello.post("cards/"+this.card_id+"/actions/comments?text="+e.value, function(){
+                        var t = Trello.post("cards/"+this.card_id+"/actions/comments?text="+value, function(){
                             that.refresh();
                             if(suc!=null) suc(); // 回调成功函数 
                         })
                         console.log(t);
                     },
                     onPostComment() {
-                        var e = document.getElementById("comment-textarea");
-                        console.log(e, e.value);
                         var that = this;
                         if(this.authorized) {
                             this.postComment(function(){console.log("comment successful")})
