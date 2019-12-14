@@ -91,7 +91,7 @@
                                 that.name = data.name;
                                 that.memberCreatorFullName = data.actions[data.actions.length-1].memberCreator.fullName;
                                 that.memberCreatorAvatar = data.actions[data.actions.length-1].memberCreator.avatarUrl+"/30.png";
-                                that.created_date = new Date(1000*parseInt(id.substring(0,8),16)).format("Y年m月d日 H:i");
+                                that.created_date = new Date(1000*parseInt(that.card_id.substring(0,8),16)).format("Y年m月d日 H:i");
                                 for(var i=0;i<=data.actions.length-2;++i) { // 从最晚到最早的评论排序
                                     data.actions[i].compiledMarkdown = marked(data.actions[i].data.text);
                                     that.comments.push(data.actions[i]); // 其他actions都是comments
@@ -123,10 +123,11 @@
                         var e = document.getElementById("comment-textarea");
                         if(!e.value) return;
                         var that = this;
-                        Trello.post("cards/"+this.card_id+"/actions/comments?text="+e.value, function(){
+                        var t = Trello.post("cards/"+this.card_id+"/actions/comments?text="+e.value, function(){
                             that.refresh();
                             if(suc!=null) suc(); // 回调成功函数 
                         })
+                        console.log(t);
                     },
                     onPostComment() {
                         var that = this;
