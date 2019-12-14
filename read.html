@@ -85,6 +85,7 @@
                         original.done(
                             function(data){
                                 console.log(data);
+                                that.comments = new Array();
                                 that.link = data.url;
                                 var ex = "[在Trello上阅读此文章]("+that.link+")\n\n";
                                 that.desc = ex+data.desc;
