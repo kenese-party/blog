@@ -122,7 +122,7 @@
                     postComment(suc=null) {
                         var value = document.getElementById("comment-textarea").value;
                         console.log("valueis:",value);
-                        if(value) return;
+                        if(!value) return;
                         var that = this;
                         var t = Trello.post("cards/"+this.card_id+"/actions/comments?text="+value, function(){
                             that.refresh();
